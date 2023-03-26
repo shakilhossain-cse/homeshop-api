@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
@@ -23,3 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
+Route::get('/search', [ProductController::class, 'search']);
+Route::post('/login',[AuthController::class, 'login']);
+Route::post('/register',[AuthController::class, 'register']);
