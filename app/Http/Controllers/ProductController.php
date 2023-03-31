@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -23,13 +24,13 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-   
+
         // $jobTitle, $location, $jobtype, $category, $joblevel, $range
         $product_title = $request->input('query');
         $product_category = $request->input('category');
         $product_color = $request->input('colors');
         $product_size = $request->input('size');
- 
+
 
 
         $jobs = Product::where('title', 'LIKE', '%' . $product_title . '%');
@@ -65,5 +66,25 @@ class ProductController extends Controller
         return response([
             'data' => $jobData,
         ], 200);
+    }
+
+
+    public function filter()
+    {
+        $categories = Product::distinct('category')->pluck('category');
+        $colors = Product::distinct('colors')->pluck('colors');
+        $sizes =  ["m", "l", "xl", "xxl", "2xl"];
+
+        $uniqueColors = collect($colors)
+            ->flatten()
+            ->unique()
+            ->values();
+        $data = [
+            'categories' => $categories,
+            'colors' => $uniqueColors,
+            'sizes' => $sizes
+        ];
+
+        return response()->json($data);
     }
 }
