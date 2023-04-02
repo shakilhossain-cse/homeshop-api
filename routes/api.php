@@ -34,5 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/billing', [BillingController::class, 'index']);
     Route::post('/upsert-billing', [BillingController::class, 'upsert']);
     Route::post('/order', [OrderController::class, 'store']);
-    Route::post('/ordercreate', [OrderController::class, 'create']);
+    Route::get('/order', [OrderController::class, 'index']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 });

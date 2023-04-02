@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -55,7 +56,7 @@ class AuthController extends Controller
             'message' => 'Login successfully',
             'user' => $user,
             'token' => $token,
-        ],200);
+        ], 200);
     }
     // logout
     public function logout(Request $request)
@@ -63,6 +64,28 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
         return response()->json([
             'message' => 'Logged out successfully'
-        ],200);
+        ], 200);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed|min:6'
+        ]);
+
+        $user = Auth::user();
+        // Verify the current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Incorrect Password']);
+        }
+        // Set the new password
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        // Return success response
+        return response()->json([
+            'message' => 'Password changed successfully',
+        ], 200);
     }
 }

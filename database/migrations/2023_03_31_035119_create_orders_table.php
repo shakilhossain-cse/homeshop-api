@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('orderId')->uniqid();
-            $table->enum('status', ["processing", "shipping", "delivered"])->default("processing");
+            $table->enum('status', ["processing", "shipping", "delivered","cancel"])->default("processing");
             $table->enum('paymentStatus', ["pending", "paid"])->default("pending");
-            $table->integer('tax');
-            $table->integer('shipping');
-            $table->integer('subtotal');
-            $table->integer('total');
+            $table->decimal('tax');
+            $table->decimal('shipping');
+            $table->decimal('subtotal');
+            $table->decimal('total');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

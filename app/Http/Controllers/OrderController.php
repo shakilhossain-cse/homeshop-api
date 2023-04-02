@@ -10,7 +10,13 @@ use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    //
+    // get specific user order 
+    public function index()
+    {
+        $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->where('user_id', '=', auth()->user()->id)->take(5)->get();
+        return response()->json($orders);
+    }
+
     public function store(Request $request)
     {
         $request->validate(
@@ -19,10 +25,10 @@ class OrderController extends Controller
                 'items*.quantity' => 'required|integer|min:1',
                 'items*.size' => 'nullable|in:m,l,xl,xxl,2xl',
                 'items*.color' => 'nullable|string',
-                'subtotal' => 'required|integer|min:0',
-                'tax' => 'required|integer|min:0',
-                'shipping' => 'required|integer|min:0',
-                'total' => 'required|integer|min:0',
+                'subtotal' => 'required|numeric|min:0',
+                'tax' => 'required|numeric|min:0',
+                'shipping' => 'required|numeric|min:0',
+                'total' => 'required|numeric|min:0',
             ],
             [
                 'items*.id.exists' => 'this product is no longer available.'
@@ -32,10 +38,9 @@ class OrderController extends Controller
         $SHIPPING_RATE = 0.05;
         $SUB_TOTAL = 0;
         $TOTAL = 0;
-        $errors = [];
         $order = new Order;
         $order->user_id = auth()->user()->id;
-        $order->orderId = Str::random(8);;
+        $order->orderId = '#' + Str::random(8);;
         $order->tax = 0;
         $order->shipping = 0;
         $order->subtotal = 0;
@@ -45,7 +50,9 @@ class OrderController extends Controller
         foreach ($request->items as $item) {
             $product = Product::find($item['id']);
             if (!$product || $product->quantity < $item['quantity']) {
-                $errors[] = ["id" => $item['id'], "message" => "this product does not have enough quantity."];
+                $errors = ["id" => $item['id'], "message" => "this product does not have enough quantity."];
+                $order->delete();
+                return response()->json(['errors' => $errors], 422);
             }
             $SUB_TOTAL +=  $product->price;
             $orderItem = new OrderItem();
@@ -53,18 +60,12 @@ class OrderController extends Controller
             $orderItem->product_id = $item['id'];
             $orderItem->price = $product->price;
             $orderItem->quantity = $item['quantity'];
-            $orderItem->size = $item['size'];
+            $orderItem->size = $item['size'] ?? 'N/A';
             $orderItem->color = $item['color'] ?? 'N/A';
             $orderItem->save();
             $product->quantity -= $item['quantity'];
             $product->save();
         }
-
-        if (count($errors) > 0) {
-            $order->delete();
-            return response()->json(['errors' => $errors], 422);
-        }
-       
 
         $TAX_RATE *= $SUB_TOTAL;
         $SHIPPING_RATE *= $SUB_TOTAL;
