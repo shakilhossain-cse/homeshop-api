@@ -5,6 +5,8 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,9 +33,12 @@ Route::get('/search', [ProductController::class, 'search']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/billing', [BillingController::class, 'index']);
     Route::post('/upsert-billing', [BillingController::class, 'upsert']);
     Route::post('/order', [OrderController::class, 'store']);
     Route::get('/order', [OrderController::class, 'index']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('upsert-profile', [ProfileController::class, 'upsert']);
+    Route::post('upload', [UploadController::class, 'upload']);
 });

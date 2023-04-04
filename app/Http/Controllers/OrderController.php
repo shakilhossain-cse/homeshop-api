@@ -40,7 +40,7 @@ class OrderController extends Controller
         $TOTAL = 0;
         $order = new Order;
         $order->user_id = auth()->user()->id;
-        $order->orderId = '#' + Str::random(8);;
+        $order->orderId = Str::random(8);;
         $order->tax = 0;
         $order->shipping = 0;
         $order->subtotal = 0;
