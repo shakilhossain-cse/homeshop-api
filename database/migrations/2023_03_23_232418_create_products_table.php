@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('sort_description');
+            $table->string('short_description');
             $table->text('description');
             $table->string('sku');
             $table->string('brand');
@@ -25,7 +25,6 @@ return new class extends Migration
             $table->integer('quantity');
             $table->json('images')->nullable();
             $table->json('sizes')->nullable();
-            $table->json('colors')->nullable();
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -16,7 +17,29 @@ class OrderController extends Controller
         $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->where('user_id', '=', auth()->user()->id)->take(5)->get();
         return response()->json($orders);
     }
+    public function allOrder()
+    {
+        $orders = Order::with('orderItems.product')->latest()->paginate(6);
+        return response()->json($orders);
+    }
+    public function show($id)
+    {
+        $order = Order::with('orderItems.product')->findOrFail($id);
+        return response()->json($order);
+    }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => ['required', 'string', Rule::in(['processing', 'shipping', 'delivered', 'cancel'])]
+        ]);
+        $order = Order::findOrFail($id);
+        $order->status = $request->input('status');
+        $order->save();
+        return response()->json([
+            'message' => 'Order status updated successfully.'
+        ]);
+    }
     public function store(Request $request)
     {
         $request->validate(
@@ -54,11 +77,11 @@ class OrderController extends Controller
                 $order->delete();
                 return response()->json(['errors' => $errors], 422);
             }
-            $SUB_TOTAL +=  $product->price;
+            $SUB_TOTAL += ($product->discount_price ?? $product->price) * $item['quantity'];
             $orderItem = new OrderItem();
             $orderItem->order_id = $order->id;
             $orderItem->product_id = $item['id'];
-            $orderItem->price = $product->price;
+            $orderItem->price = $product->discount_price ?? $product->price;
             $orderItem->quantity = $item['quantity'];
             $orderItem->size = $item['size'] ?? 'N/A';
             $orderItem->color = $item['color'] ?? 'N/A';
@@ -70,6 +93,8 @@ class OrderController extends Controller
         $TAX_RATE *= $SUB_TOTAL;
         $SHIPPING_RATE *= $SUB_TOTAL;
         $TOTAL = $SUB_TOTAL + $TAX_RATE + $SHIPPING_RATE;
+
+
         $order->tax = $TAX_RATE;
         $order->shipping = $SHIPPING_RATE;
         $order->subtotal = $SUB_TOTAL;

@@ -11,7 +11,7 @@ class Product extends Model
     protected $fillable = [
         'title',
         'description',
-        'sort_description',
+        'short_description',
         'sku',
         'brand',
         'category',
@@ -20,12 +20,9 @@ class Product extends Model
         'discount_price',
         'images',
         'sizes',
-        'colors',
-
     ];
 
     protected $casts = [
-        'colors' => 'json',
         'sizes' => 'json',
         'images' => 'json'
     ];

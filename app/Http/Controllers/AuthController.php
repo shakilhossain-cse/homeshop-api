@@ -10,6 +10,22 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    // get all user 
+    public function index(Request $request)
+    {
+
+        $page = $request->input('page', 1);
+        $searchTerm = $request->input('search', '');
+
+        $users = User::when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('name', 'like', '%'.$searchTerm.'%');
+            })
+            ->latest()
+            ->paginate(6, ['*'], 'page', $page);
+
+        return $users;
+        return response()->json($users);
+    }
     // register
     public function register(Request $request)
     {
@@ -77,7 +93,7 @@ class AuthController extends Controller
         $user = Auth::user();
         // Verify the current password
         if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Incorrect Password'],403);
+            return response()->json(['message' => 'Incorrect Password'], 403);
         }
         // Set the new password
         $user->password = Hash::make($request->input('password'));

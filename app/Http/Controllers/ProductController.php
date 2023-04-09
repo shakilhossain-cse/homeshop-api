@@ -11,16 +11,51 @@ class ProductController extends Controller
     //
     public function index()
     {
-        $products = Product::paginate(6);
+        $products = Product::latest()->paginate(6);
         return response()->json($products);
     }
 
     public function show($slug)
     {
         $product = Product::where('slug', $slug)->firstOrFail();
-
         return response()->json($product);
     }
+
+    public function store(Request $request)
+    {
+        function createUrlSlug($urlString)
+        {
+            $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $urlString);
+            return $slug;
+        }
+        $product = new Product();
+        $product->title = $request->title;
+        $product->slug = createUrlSlug($request->title);
+        $product->description = $request->description;
+        $product->short_description = $request->short_description;
+        $product->sku = $request->sku;
+        $product->brand = $request->brand;
+        $product->category = $request->category;
+        $product->price = $request->price;
+        $product->quantity = $request->quantity;
+        $product->discount_price = $request->discount_price;
+        $product->images = $request->images;
+        $product->sizes = $request->sizes;
+        $product->save();
+        return response()->json(["message" => "Product created successfully"], 201);
+    }
+
+    // title
+    // description
+    // short_description
+    // sku
+    // brand
+    // category
+    // price
+    // quantity
+    // discount_price
+    // images
+    // sizes
 
     public function search(Request $request)
     {
@@ -86,5 +121,12 @@ class ProductController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function destroy($productId)
+    {
+       $product = Product::findOrFail($productId);
+       $product->delete();
+       return response()->json(['message' => 'Resource deleted successfully']);
     }
 }
