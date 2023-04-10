@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Billing;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -25,7 +26,9 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::with('orderItems.product')->findOrFail($id);
-        return response()->json($order);
+        $billing = Billing::where('user_id', $order->user_id)->first();
+        $response = ['orders' => $order, 'billing' => $billing];
+        return response()->json($response);
     }
 
     public function updateStatus(Request $request, $id)

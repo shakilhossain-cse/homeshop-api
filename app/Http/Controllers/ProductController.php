@@ -45,62 +45,57 @@ class ProductController extends Controller
         return response()->json(["message" => "Product created successfully"], 201);
     }
 
-    // title
-    // description
-    // short_description
-    // sku
-    // brand
-    // category
-    // price
-    // quantity
-    // discount_price
-    // images
-    // sizes
-
     public function search(Request $request)
     {
+        $categories = $request->input('categories', []);
+        $brands = $request->input('brands', []);
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+        $size = $request->input('size');
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sort_by');
+        $query = Product::query();
 
-        // $jobTitle, $location, $jobtype, $category, $joblevel, $range
-        $product_title = $request->input('query');
-        $product_category = $request->input('category');
-        $product_color = $request->input('colors');
-        $product_size = $request->input('size');
-
-
-
-        $jobs = Product::where('title', 'LIKE', '%' . $product_title . '%');
-
-        if ($product_color) {
-            $jobs->where('colors', $product_color);
+        if (!empty($categories)) {
+            $query->whereIn('category', $categories);
         }
-        if ($product_category) {
-            $jobs->where('category', "=", $product_category);
-        }
-        if ($product_size) {
-            $jobs->where('size', "=", $product_size);
-        }
-        // if ($categories) {
-        //     $jobs->where('category', "=", $categories);
-        // }
-        // if ($jobtype) {
-        //     $jobs->where('jobType', "=", $jobtype);
-        // }
-        // if ($joblevel) {
-        //     $jobs->where('jobLevel', '=', $joblevel);
-        // }
-        // if ($salary) {
-        //     $money =
-        //         str_replace('$', '', $salary);
-        //         $strSplit = explode("-", $money);
-        //     $minRange = $strSplit[0];
-        //     $maxRange = $strSplit[1];
-        //     $jobs->whereBetween('salary', [$minRange, $maxRange]);
-        // }
 
-        $jobData = $jobs->paginate(6);
-        return response([
-            'data' => $jobData,
-        ], 200);
+        if (!empty($brands)) {
+            $query->whereIn('brand', $brands);
+        }
+
+        if (!is_null($minPrice)) {
+            $query->where('price', '>=', $minPrice);
+        }
+
+        if (!is_null($maxPrice)) {
+            $query->where('price', '<=', $maxPrice);
+        }
+
+        if (!empty($size)) {
+            $query->whereJsonContains('sizes', [$size]);
+        }
+
+        if (!empty($search)) {
+            $query->where('name', 'like', "%$search%");
+        }
+        switch ($sortBy) {
+            case 'low_to_high':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'high_to_low':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'latest':
+                $query->latest();
+                break;
+            default:
+                $query->inRandomOrder();
+        }
+        $products = $query->paginate($perPage, ['*'], 'page', $page);
+        return response()->json($products);
     }
 
 
@@ -125,8 +120,8 @@ class ProductController extends Controller
 
     public function destroy($productId)
     {
-       $product = Product::findOrFail($productId);
-       $product->delete();
-       return response()->json(['message' => 'Resource deleted successfully']);
+        $product = Product::findOrFail($productId);
+        $product->delete();
+        return response()->json(['message' => 'Resource deleted successfully']);
     }
 }

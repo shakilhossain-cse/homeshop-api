@@ -29,7 +29,7 @@ Route::get('/home', [HomeController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/filter', [ProductController::class, 'filter']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
-Route::get('/search', [ProductController::class, 'search']);
+Route::get('/product', [ProductController::class, 'search']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {

@@ -23,6 +23,10 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function billings()
+    {
+        return $this->belongsTo(Billing::class);
+    }
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
