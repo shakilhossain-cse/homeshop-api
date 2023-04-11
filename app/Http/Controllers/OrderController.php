@@ -18,9 +18,9 @@ class OrderController extends Controller
         $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->where('user_id', '=', auth()->user()->id)->take(5)->get();
         return response()->json($orders);
     }
-    public function allOrder()
+    public function allOrder($status = "processing")
     {
-        $orders = Order::with('orderItems.product')->latest()->paginate(6);
+        $orders = Order::with('orderItems.product')->where('status', '=', $status)->latest()->paginate(6);
         return response()->json($orders);
     }
     public function show($id)

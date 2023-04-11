@@ -23,27 +23,76 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        function createUrlSlug($urlString)
-        {
-            $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $urlString);
-            return $slug;
-        }
+        $validatedData = $request->validate([
+            'title' => 'required|max:255|unique:products,title,',
+            'description' => 'required',
+            'short_description' => 'required',
+            'sku' => 'required',
+            'brand' => 'required',
+            'category' => 'required',
+            'price' => 'required|numeric',
+            'quantity' => 'required|integer',
+            'discount_price' => 'nullable|numeric',
+            'images' => 'nullable|array',
+            'sizes' => 'nullable|array',
+        ]);
+
         $product = new Product();
-        $product->title = $request->title;
-        $product->slug = createUrlSlug($request->title);
-        $product->description = $request->description;
-        $product->short_description = $request->short_description;
-        $product->sku = $request->sku;
-        $product->brand = $request->brand;
-        $product->category = $request->category;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->discount_price = $request->discount_price;
-        $product->images = $request->images;
-        $product->sizes = $request->sizes;
+        $product->title = $validatedData['title'];
+        $product->slug = createUrlSlug($validatedData['title']);
+        $product->description = $validatedData['description'];
+        $product->short_description = $validatedData['short_description'];
+        $product->sku = $validatedData['sku'];
+        $product->brand = $validatedData['brand'];
+        $product->category = $validatedData['category'];
+        $product->price = $validatedData['price'];
+        $product->quantity = $validatedData['quantity'];
+        $product->discount_price = $validatedData['discount_price'];
+        $product->images = $validatedData['images'];
+        $product->sizes = $validatedData['sizes'];
+
         $product->save();
+
         return response()->json(["message" => "Product created successfully"], 201);
     }
+
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|max:255|unique:products,title,' . $id,
+            'description' => 'required',
+            'short_description' => 'required',
+            'sku' => 'required',
+            'brand' => 'required',
+            'category' => 'required',
+            'price' => 'required|numeric',
+            'quantity' => 'required|integer',
+            'discount_price' => 'nullable|numeric',
+            'images' => 'nullable|array',
+            'sizes' => 'nullable|array',
+        ]);
+
+        $product = Product::findOrFail($id);
+        $product->title = $validatedData['title'];
+        $product->slug = createUrlSlug($validatedData['title']);
+        $product->description = $validatedData['description'];
+        $product->short_description = $validatedData['short_description'];
+        $product->sku = $validatedData['sku'];
+        $product->brand = $validatedData['brand'];
+        $product->category = $validatedData['category'];
+        $product->price = $validatedData['price'];
+        $product->quantity = $validatedData['quantity'];
+        $product->discount_price = $validatedData['discount_price'];
+        $product->images = $validatedData['images'];
+        $product->sizes = $validatedData['sizes'];
+
+        $product->save();
+
+        return response()->json(["message" => "Product updated successfully"], 200);
+    }
+
+
+
 
     public function search(Request $request)
     {
@@ -124,4 +173,10 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Resource deleted successfully']);
     }
+}
+
+function createUrlSlug($urlString)
+{
+    $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $urlString);
+    return $slug;
 }

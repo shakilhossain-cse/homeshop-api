@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -33,7 +34,12 @@ Route::get('/product', [ProductController::class, 'search']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/data', [DashboardController::class, 'getData']);
+    Route::get('/me', [AuthController::class, 'authUser']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
     Route::post('/product', [ProductController::class, 'store']);
+    Route::patch('/product/{id}', [ProductController::class, 'update']);
     Route::delete('/product/{productId}', [ProductController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/users', [AuthController::class, 'index']);
@@ -43,8 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/order', [OrderController::class, 'index']);
     Route::get('/order/{id}', [OrderController::class, 'show']);
     Route::post('/order-status/{id}', [OrderController::class, 'updateStatus']);
-    Route::get('/all-order', [OrderController::class, 'allOrder']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     Route::post('upsert-profile', [ProfileController::class, 'upsert']);
 });
+Route::get('/all-order/{status}', [OrderController::class, 'allOrder']);
 Route::post('/upload', [UploadController::class, 'upload']);

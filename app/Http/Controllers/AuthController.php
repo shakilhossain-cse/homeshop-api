@@ -10,42 +10,56 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+
+
+    // get login data 
+    public function authUser()
+    {
+        $user = auth()->user();
+        return response()->json($user);
+    }
+
+ 
+
     // get all user 
     public function index(Request $request)
     {
 
         $page = $request->input('page', 1);
-        $searchTerm = $request->input('search', '');
+        $searchTerm = $request->input('search|');
 
         $users = User::when($searchTerm, function ($query, $searchTerm) {
-                return $query->where('name', 'like', '%'.$searchTerm.'%');
-            })
+            return $query->where('name|like|%' . $searchTerm . '%');
+        })
             ->latest()
             ->paginate(6, ['*'], 'page', $page);
 
         return $users;
         return response()->json($users);
     }
+
     // register
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:6',
         ]);
 
         $user = new User();
-        $user->name = $request->name;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = User::count() === 0 ? 'admin' : 'member'; // First user is admin
+        $user->role = User::count() === 0 ? 'admin' : 'member';
         $user->save();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Register successfully',
+            'message' => 'Registration successful',
             'user' => $user,
             'token' => $token,
         ], 201);

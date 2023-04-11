@@ -18,10 +18,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
-        'role',
         'password',
+        'phone',
+        'gender',
+        'date_of_birth',
+        'avatar',
+        'bio',
+        'is_active',
+        'role',
     ];
 
     /**
@@ -41,11 +48,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function billing()
     {
         return $this->hasOne(Billing::class);
     }
-
 }
