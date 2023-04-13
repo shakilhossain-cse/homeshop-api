@@ -96,8 +96,8 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $categories = $request->input('categories', []);
-        $brands = $request->input('brands', []);
+        $category = $request->input('categories');
+        $brand = $request->input('brands');
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
         $size = $request->input('size');
@@ -107,13 +107,16 @@ class ProductController extends Controller
         $sortBy = $request->input('sort_by');
         $query = Product::query();
 
-        if (!empty($categories)) {
+        $categories = explode(",", $category);
+        $brands = explode(",", $brand);
+
+        if (count($categories) >= 1 && $categories[0] !== '') {
             $query->whereIn('category', $categories);
         }
-
-        if (!empty($brands)) {
+        if (count($brands) >= 1 && $brands[0] !== '') {
             $query->whereIn('brand', $brands);
         }
+  
 
         if (!is_null($minPrice)) {
             $query->where('price', '>=', $minPrice);
@@ -128,7 +131,7 @@ class ProductController extends Controller
         }
 
         if (!empty($search)) {
-            $query->where('name', 'like', "%$search%");
+            $query->where('title', 'like', "%$search%");
         }
         switch ($sortBy) {
             case 'low_to_high':
@@ -151,16 +154,17 @@ class ProductController extends Controller
     public function filter()
     {
         $categories = Product::distinct('category')->pluck('category');
-        $colors = Product::distinct('colors')->pluck('colors');
+        $brands = Product::distinct('brand')->pluck('brand');
         $sizes =  ["m", "l", "xl", "xxl", "2xl"];
 
-        $uniqueColors = collect($colors)
-            ->flatten()
-            ->unique()
-            ->values();
+        // $colors = Product::distinct('colors')->pluck('colors');
+        // $uniqueColors = collect($colors)
+        //     ->flatten()
+        //     ->unique()
+        //     ->values();
         $data = [
             'categories' => $categories,
-            'colors' => $uniqueColors,
+            'brands' => $brands,
             'sizes' => $sizes
         ];
 

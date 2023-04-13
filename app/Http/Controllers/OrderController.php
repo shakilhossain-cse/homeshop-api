@@ -23,6 +23,23 @@ class OrderController extends Controller
         $orders = Order::with('orderItems.product')->where('status', '=', $status)->latest()->paginate(6);
         return response()->json($orders);
     }
+
+
+    public function myOrder($status)
+    {
+        $user_id = auth()->user()->id;
+        $orders = Order::with('orderItems.product')
+            ->where('user_id', $user_id)
+            ->when($status === 'cancel', function ($query) {
+                return $query->where('status', 'cancel');
+            }, function ($query) {
+                return $query->whereIn('status', ['processing', 'shipping', 'delivered']);
+            })
+            ->get();
+        return response()->json($orders);
+    }
+
+
     public function show($id)
     {
         $order = Order::with('orderItems.product')->findOrFail($id);

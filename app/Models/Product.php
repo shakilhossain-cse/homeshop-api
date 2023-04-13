@@ -28,24 +28,8 @@ class Product extends Model
     ];
 
 
-    public function rules()
+    public function wishlistedBy()
     {
-        return [
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'short_description' => 'nullable|string',
-            'sku' => 'required|string',
-            'brand' => 'required|string',
-            'category' => 'required|string',
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
-            'images' => 'array',
-            'sizes.*' => 'string',
-            'sizes' => 'array',
-            'sizes.*' => 'in:m,l,xl,xxl,2xl',
-            'colors' => 'array',
-            'colors.*' => 'in:red,blue,black,white,green',
-        ];
+        return $this->hasMany(Wishlist::class);
     }
 }
