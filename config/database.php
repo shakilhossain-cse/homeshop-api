@@ -63,7 +63,7 @@ return [
         ],
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => "postgres://homeshop_l3ha_user:Gcm0OJ1QELeOpNZDLAZJdOxBr3jSULGU@dpg-cgsqtgm4dad30h4gh5t0-a/homeshop_l3ha",
+            'url' => "postgres://homeshop_l3ha_user:Gcm0OJ1QELeOpNZDLAZJdOxBr3jSULGU@dpg-cgsqtgm4dad30h4gh5t0-a.oregon-postgres.render.com/homeshop_l3ha",
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'forge'),
