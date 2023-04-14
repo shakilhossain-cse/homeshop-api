@@ -9,5 +9,8 @@ php artisan config:cache
 echo "Caching routes..."
 php artisan route:cache
 
+echo "Optimze larave..."
+php artisan optimize:clear
+
 echo "Running migrations..."
 php artisan migrate --force
