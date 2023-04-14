@@ -42,19 +42,6 @@ return [
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
-        // Render PostgreSQL database
-        // 'pgsql_render' => [
-        //     'driver' => 'pgsql',
-        //     'host' => 'pg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com',
-        //     'port' => '5432',
-        //     'database' => 'homeshop_8tnm',
-        //     'username' => 'shakil',
-        //     'password' => 'ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U',
-        //     'charset' => 'utf8',
-        //     'prefix' => '',
-        //     'schema' => 'public',
-        //     'sslmode' => 'require',],
-        // ],postgres://shakil:ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U@dpg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com/homeshop_8tnm
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
@@ -74,10 +61,9 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
+            'url' => "postgres://homeshop_l3ha_user:Gcm0OJ1QELeOpNZDLAZJdOxBr3jSULGU@dpg-cgsqtgm4dad30h4gh5t0-a/homeshop_l3ha",
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'forge'),
