@@ -31,7 +31,7 @@ return new class extends Migration
             // Check if the exception is caused by a unique violation error
             if ($e->errorInfo[1] === 23505) {
                 // Perform the necessary action, such as dropping the existing sequence
-                DB::statement('DROP SEQUENCE IF EXISTS order_items_id_seq');
+                DB ::statement('DROP SEQUENCE IF EXISTS order_items_id_seq');
                 // Retry creating the table
                 $this->up();
             } else {
