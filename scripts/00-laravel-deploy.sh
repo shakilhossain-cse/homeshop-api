@@ -13,4 +13,4 @@ echo "Optimze larave..."
 php artisan optimize:clear
 
 echo "Running migrations..."
-php artisan migrate --force
+php artisan migrate:fresh --force
