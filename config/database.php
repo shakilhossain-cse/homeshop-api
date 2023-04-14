@@ -43,18 +43,20 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
         // Render PostgreSQL database
-        // 'pgsql_render' => [
-        //     'driver' => 'pgsql',
-        //     'host' => 'pg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com',
-        //     'port' => '5432',
-        //     'database' => 'homeshop_8tnm',
-        //     'username' => 'shakil',
-        //     'password' => 'ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U',
-        //     'charset' => 'utf8',
-        //     'prefix' => '',
-        //     'schema' => 'public',
-        //     'sslmode' => 'require',],
-        // ],postgres://shakil:ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U@dpg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com/homeshop_8tnm
+        'pgsql_render' => [
+            'driver' => 'pgsql',
+            'host' => 'pg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com',
+            'port' => '5432',
+            'database' => 'homeshop_8tnm',
+            'username' => 'shakil',
+            'password' => 'ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U',
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+            'sslmode' => 'require',
+        ],
+
+        // ,postgres://shakil:ZCDiCUAziWtV5zYZ6Mdk47UGlroA2n5U@dpg-cgg7qpu4daddcg2n8mng-a.oregon-postgres.render.com/homeshop_8tnm
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
